@@ -256,10 +256,10 @@ class wxWidgetsConan(ConanFile):
         if self.options.richtext:
             libs.append(library_pattern('richtext'))
         if self.options.stc:
-            libs.append(library_pattern('stc'))
             if not self.options.shared:
                 scintilla_suffix = '{debug}' if self.settings.os == "Windows" else '{suffix}'
                 libs.append('wxscintilla' + scintilla_suffix)
+            libs.append(library_pattern('stc'))
         if self.options.webview:
             libs.append(library_pattern('webview'))
         if self.options.xrc:
