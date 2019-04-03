@@ -284,6 +284,8 @@ class wxWidgetsConan(ConanFile):
             self.add_libraries_from_pc('x11')
             self.cpp_info.libs.extend(['dl', 'pthread'])
         elif self.settings.os == 'Macos':
+            self.cpp_info.includedirs = ['lib/wx/include/osx_cocoa-unicode-static' + suffix
+                                         'include/wx' + suffix]
             self.cpp_info.defines.extend(['__WXMAC__', '__WXOSX__', '__WXOSX_COCOA__'])
             for framework in ['Carbon',
                               'Cocoa',
