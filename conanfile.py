@@ -207,6 +207,20 @@ class wxWidgetsConan(ConanFile):
         if self.settings.os == 'Windows':
             # copy wxrc.exe
             self.copy(pattern='*', dst='bin', src=os.path.join(self._build_subfolder, 'bin'), keep_path=False)
+        else:
+            # make relative symlink
+            bin_dir = os.path.join(self.package_folder, 'bin')
+            for x in os.listdir(bin_dir):
+                filename = os.path.join(bin_dir, x)
+                if os.path.islink(filename):
+                    print(filename)
+                    target = os.readlink(filename)
+                    print("  -> " + target)
+                    if os.path.isabs(target):
+                        rel = os.path.relpath(target, bin_dir)
+                        print("  = " + rel)
+                        os.remove(filename)
+                        os.symlink(rel, filename)
 
     def package_info(self):
         version_tokens = self.version.split('.')
