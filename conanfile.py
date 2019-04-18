@@ -204,8 +204,9 @@ class wxWidgetsConan(ConanFile):
         # copy setup.h
         self.copy(pattern='*setup.h', dst=os.path.join('include', 'wx'), src=os.path.join(self._build_subfolder, 'lib'),
                   keep_path=False)
-        # copy wxrc.exe
-        self.copy(pattern='*', dst='bin', src=os.path.join(self._build_subfolder, 'bin'), keep_path=False)
+        if self.settings.os == 'Windows':
+            # copy wxrc.exe
+            self.copy(pattern='*', dst='bin', src=os.path.join(self._build_subfolder, 'bin'), keep_path=False)
 
     def package_info(self):
         version_tokens = self.version.split('.')
