@@ -129,6 +129,10 @@ class wxWidgetsConan(ConanFile):
         tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version), sha256=sha256)
         extracted_dir = "wxWidgets-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
+        
+        # [OSX] wxGLCanvas resize fix on macOS 10.14.5
+        # https://github.com/wxWidgets/wxWidgets/pull/1354
+        tools.patch(base_path=self._source_subfolder, patch_file="v3.1.2_1354.patch", strip=1)
 
     def add_libraries_from_pc(self, library):
         pkg_config = tools.PkgConfig(library)
