@@ -130,6 +130,10 @@ class wxWidgetsConan(ConanFile):
         extracted_dir = "wxWidgets-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         
+        # Don't rely on IsShownOnScreen to determine if things need to draw/refresh
+        # https://github.com/wxWidgets/wxWidgets/pull/1010
+        tools.patch(base_path=self._source_subfolder, patch_file="1010.patch", strip=1)
+
         # [OSX] wxGLCanvas resize fix on macOS 10.14.5
         # https://github.com/wxWidgets/wxWidgets/pull/1354
         tools.patch(base_path=self._source_subfolder, patch_file="v3.1.2_1354.patch", strip=1)

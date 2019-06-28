@@ -1,0 +1,78 @@
+diff --git a/src/osx/carbon/dcclient.cpp b/src/osx/carbon/dcclient.cpp
+index c05a31f9d70..9fd19bfdc8d 100644
+--- a/src/osx/carbon/dcclient.cpp
++++ b/src/osx/carbon/dcclient.cpp
+@@ -48,8 +48,6 @@ wxWindowDCImpl::wxWindowDCImpl( wxDC *owner, wxWindow *window )
+     m_ok = true ;
+ 
+     m_window->GetSize( &m_width , &m_height);
+-    if ( !m_window->IsShownOnScreen() )
+-        m_width = m_height = 0;
+ 
+     CGContextRef cg = (CGContextRef) window->MacGetCGContextRef();
+ 
+@@ -122,8 +120,6 @@ wxClientDCImpl::wxClientDCImpl( wxDC *owner, wxWindow *window ) :
+     wxCHECK_RET( window, wxT("invalid window in wxClientDCImpl") );
+     wxPoint origin = window->GetClientAreaOrigin() ;
+     m_window->GetClientSize( &m_width , &m_height);
+-    if ( !m_window->IsShownOnScreen() )
+-        m_width = m_height = 0;
+     
+     int x0,y0;
+     DoGetDeviceOrigin(&x0,&y0);
+diff --git a/src/osx/window_osx.cpp b/src/osx/window_osx.cpp
+index a8242fc83cd..52ab519f1f3 100644
+--- a/src/osx/window_osx.cpp
++++ b/src/osx/window_osx.cpp
+@@ -484,9 +484,7 @@ void wxWindowMac::MacUpdateControlFont()
+     if ( GetPeer() )
+         GetPeer()->SetFont( GetFont() , GetForegroundColour() , GetWindowStyle() ) ;
+ 
+-    // do not trigger refreshes upon invisible and possible partly created objects
+-    if ( IsShownOnScreen() )
+-        Refresh() ;
++    Refresh() ;
+ }
+ 
+ bool wxWindowMac::SetFont(const wxFont& font)
+@@ -926,10 +924,6 @@ void wxWindowMac::MacInvalidateBorders()
+     if ( GetPeer() == NULL )
+         return ;
+ 
+-    bool vis = IsShownOnScreen() ;
+-    if ( !vis )
+-        return ;
+-
+     int outerBorder = MacGetLeftBorderSize() ;
+ 
+     if ( GetPeer()->NeedsFocusRect() )
+@@ -1210,10 +1204,6 @@ void wxWindowMac::SetLabel(const wxString& title)
+ 
+     if ( GetPeer() && GetPeer()->IsOk() )
+         GetPeer()->SetLabel( wxStripMenuCodes(m_label, wxStrip_Mnemonics), GetFont().GetEncoding() ) ;
+-
+-    // do not trigger refreshes upon invisible and possible partly created objects
+-    if ( IsShownOnScreen() )
+-        Refresh() ;
+ }
+ 
+ wxString wxWindowMac::GetLabel() const
+@@ -1354,9 +1344,6 @@ void wxWindowMac::Refresh(bool WXUNUSED(eraseBack), const wxRect *rect)
+     if ( GetPeer() == NULL )
+         return ;
+ 
+-    if ( !IsShownOnScreen() )
+-        return ;
+-
+     if ( IsFrozen() )
+         return;
+ 
+@@ -1895,7 +1882,7 @@ const wxRegion& wxWindowMac::MacGetVisibleRegion( bool includeOuterStructures )
+ {
+     static wxRegion emptyrgn ;
+ 
+-    if ( !m_isBeingDeleted && IsShownOnScreen() )
++    if ( !m_isBeingDeleted )
+     {
+         MacUpdateClippedRects() ;
+         if ( includeOuterStructures )
